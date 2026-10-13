@@ -4,6 +4,10 @@ Firmware et carte d'alimentation d'un petit robot autonome réalisé pour la cou
 
 Le robot part d'un coin d'une arène de 8 × 8 m. Il doit rejoindre une balise infrarouge placée dans le coin opposé en évitant les obstacles et les autres robots, puis s'arrêter sur la zone d'arrivée, marquée par une feuille rouge. Il n'a pas de batterie : il est chargé avant chaque course par un vélo générateur.
 
+![Robot Léo : carte d'alimentation à supercondensateurs (au premier plan) et carte principale ESP32](docs/robot_leo.jpg)
+
+*Au premier plan, la carte d'alimentation (FP3) avec ses deux supercondensateurs de 200 F ; derrière, la carte principale ESP32 (FP2). À l'avant, le sonar à ultrasons.*
+
 Le robot est découpé en cartes (sonar, balise IR, puissance moteurs…). Ce dépôt contient les deux parties que j'ai réalisées :
 
 - **FP2, gestion du robot :** la carte principale ESP32 et la stratégie de course ([firmware/](firmware/)).
@@ -92,5 +96,5 @@ Durée de décharge entre 4,2 V et 3,3 V, à 500 mA :
 ```
 firmware/FP2_gestion_robot/   code de la carte principale
 hardware/                     projet KiCad de la carte FP3 (à ajouter)
-docs/                         photos et vues du PCB (à ajouter)
+docs/                         photo du robot
 ```
