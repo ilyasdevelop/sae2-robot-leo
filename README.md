@@ -8,10 +8,10 @@ Le robot part d'un coin d'une arène de 8 × 8 m. Il doit rejoindre une balise i
 
 *Au premier plan, la carte d'alimentation (FP3) avec ses deux supercondensateurs de 200 F ; derrière, la carte principale ESP32 (FP2). À l'avant, le sonar à ultrasons.*
 
-Le robot est découpé en cartes (sonar, balise IR, puissance moteurs…). Ce dépôt contient les deux parties que j'ai réalisées :
+Le robot a été réalisé en équipe de 3 et découpé en cartes (sonar, balise IR, puissance moteurs…). Ce dépôt contient les deux parties dont j'étais responsable :
 
 - **FP2, gestion du robot :** la carte principale ESP32 et la stratégie de course ([firmware/](firmware/)).
-- **FP3, alimentation :** une carte à supercondensateurs ([hardware/](hardware/)).
+- **FP3, alimentation :** une carte à supercondensateurs (schéma et PCB décrits plus bas ; fichiers KiCad non publiés).
 
 ## FP2 – Gestion du robot
 
@@ -58,6 +58,7 @@ Voici ce que je changerais avec le recul :
 
 - `EVITER_OBSTACLE` est **bloquant** (`while` + `delay`). Pendant l'esquive, le robot ne lit plus la balise ni le capteur couleur.
 - Le robot esquive **toujours par la droite**, donc `derniere_esquive_droite` vaut toujours `true` et la recherche tourne toujours à gauche. Il faudrait choisir le côté d'esquive (par exemple en alternant) pour que la mémoire serve vraiment.
+- `OBSTACLE` est câblé sur le GPIO 36, une entrée sans résistance de tirage interne (GPIO 34 à 39) : `INPUT_PULLUP` n'y a aucun effet, l'état au repos dépend de la sortie de la carte sonar. Il faudrait écrire `INPUT`, ou ajouter une résistance de tirage sur la carte.
 - Le Bluetooth (`SerialBT`) est initialisé mais pas utilisé. Il pourrait servir à suivre l'état du robot à distance pendant les essais.
 
 ## FP3 – Alimentation par supercondensateurs
@@ -66,12 +67,12 @@ Voici ce que je changerais avec le recul :
 
 La batterie LiPo est remplacée par deux supercondensateurs **Vishay SCCX50B207SSB (200 F, 2,7 V) en série**. Une seule cellule ne monte pas assez haut en tension, et la mise en série évite d'ajouter un hacheur élévateur.
 
-Durée de décharge entre 4,2 V et 3,3 V, à 500 mA :
+Durée de décharge à 500 mA, entre 4,2 V et 3,3 V aux bornes de l'ensemble (5,4 V au maximum avec 2 × 2,7 V) :
 
 ```
 Δt = C·ΔV / I
-1 cellule  : 200 F × 0,9 V / 0,5 A = 360 s
-2 en série : 100 F × 0,9 V / 0,5 A = 180 s
+2 cellules en série : C_éq = 200 F / 2 = 100 F
+Δt = 100 F × 0,9 V / 0,5 A = 180 s
 ```
 
 ### Schéma
@@ -87,6 +88,7 @@ Durée de décharge entre 4,2 V et 3,3 V, à 500 mA :
 
 ### Tests
 
+- Carte brasée et testée par mes soins (CMS en face inférieure, composants traversants en face supérieure).
 - Charge complète des deux cellules : pas d'échauffement de l'AOP ni des zones de puissance.
 - Branchée sur la carte principale, la carte fournit le courant d'appel de l'ESP32 et des drivers moteurs au démarrage. Le robot s'initialise normalement.
 - Pas de prototype sur plaque d'essai pour cette fonction : le montage d'équilibrage est un schéma documenté, validé sur le papier avant de passer au PCB.
@@ -95,6 +97,9 @@ Durée de décharge entre 4,2 V et 3,3 V, à 500 mA :
 
 ```
 firmware/FP2_gestion_robot/   code de la carte principale
-hardware/                     projet KiCad de la carte FP3 (à ajouter)
 docs/                         photo du robot
 ```
+
+---
+
+Projet pédagogique (SAÉ2, BUT GEII, IUT de Nantes), partagé à titre de portfolio.
